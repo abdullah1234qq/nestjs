@@ -1,17 +1,27 @@
-import { Controller, Get, Param } from '@nestjs/common';
-
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
+    constructor(private readonly userService: UserService) { }
     @Get()
-    findAll() {
-        return []
+    findAll(@Query("role") role?: "INTERN" | "ENGINEER" | "ADMIN") {
+        return this.userService.findAll(role);
     }
+
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return { id };
+        return this.userService.findOne(+id);
     }
-    @Get('interns')
-    findAllInterns() {
-        return []
+    @Post()
+    create(@Body() user: { name: string; email: string; role: "INTERN" | "ENGINEER" | "ADMIN" }) {
+        return this.userService.create(user);
+    }
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() userUpdate: { name?: string, email?: string, role?: "INTERN" | "ENGINEER" | "ADMIN" }) {
+        return this.userService.update(+id, userUpdate);
+    }
+    @Delete(":id")
+    delete(@Param("id") id: string,) {
+        return this.userService.delete(+id);
     }
 }
